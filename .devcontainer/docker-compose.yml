@@ -1,0 +1,35 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+
+    command: sleep infinity
+
+    working_dir: /workspaces/full-rag
+
+    volumes:
+      - ..:/workspaces/full-rag:cached
+
+    depends_on:
+      - mongo
+      - valkey
+
+  mongo:
+    image: mongo:latest
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+    volumes:
+      - mongo-data:/data/db
+
+  valkey:
+    image: valkey/valkey:latest
+    restart: unless-stopped
+    volumes:
+      - valkey-data:/data
+
+volumes:
+  mongo-data:
+  valkey-data:
