@@ -8,7 +8,13 @@ from fastapi.encoders import jsonable_encoder
 from app.constants.status import FileStatus
 
 from app.schemas.file import FileSchema
-from app.schemas.requests import ChatRequest
+from app.schemas.requests import (
+    ChatRequest,
+    DocumentAnalysisRequest,
+)
+from app.services.document_analysis import (
+    DocumentAnalysisService,
+)
 from app.schemas.responses import ChatResponse
 
 from app.db.collections.files import files_collection
@@ -117,6 +123,64 @@ async def chat(request: ChatRequest):
         file_id=request.file_id,
         question=request.question,
     )
+    
+# =====================================================
+# Document Intelligence Agent
+# =====================================================
+
+@app.post(
+    "/analyze",
+)
+async def analyze_document(
+    request: DocumentAnalysisRequest,
+):
+
+    try:
+
+        service = DocumentAnalysisService()
+
+        result = await service.analyze(
+            file_id=request.file_id,
+            analysis_type=request.analysis_type,
+        )
+
+        return {
+            "success": True,
+            "file_id": request.file_id,
+            "analysis": result.model_dump(),
+        }
+
+    except FileNotFoundError as e:
+
+        raise HTTPException(
+            status_code=404,
+            detail=str(e),
+        )
+
+    except ValueError as e:
+
+        raise HTTPException(
+            status_code=400,
+            detail=str(e),
+        )
+
+    except RuntimeError as e:
+
+        raise HTTPException(
+            status_code=409,
+            detail=str(e),
+        )
+
+    except Exception as e:
+
+        print(
+            f"Document analysis failed: {e}"
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="Document analysis failed.",
+        )
 
 
 # =====================================================
