@@ -13,7 +13,9 @@ class KnowledgeService:
         question: str,
     ):
 
-        return await self.pipeline.run(
+        response = await self.pipeline.run(
             file_id=file_id,
             question=question,
         )
+
+        return response
