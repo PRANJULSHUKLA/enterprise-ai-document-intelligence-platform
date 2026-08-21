@@ -18,7 +18,7 @@ class RAGConfig:
     # Generation
     # ==================================================
 
-    MAX_OUTPUT_TOKENS = 2048
+    MAX_OUTPUT_TOKENS = 8192
 
     TEMPERATURE = 0.2
 
@@ -27,3 +27,9 @@ class RAGConfig:
     # ==================================================
 
     MAX_CONTEXT_LENGTH = 8000
+    
+    # -----------------------------
+    # Agent 3
+    # -----------------------------
+
+    WORKFLOW_MODEL = "models/gemini-3.6-flash"
